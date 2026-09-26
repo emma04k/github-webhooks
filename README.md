@@ -6,6 +6,7 @@ Proyecto para probar webhooks de GitHub y enviar notificaciones a Discord.
 
 - Node.js instalado.
 - Una URL de webhook de Discord.
+- Un secreto compartido para validar las solicitudes de GitHub.
 
 ## Configuración
 
@@ -30,11 +31,12 @@ cp .env.template .env
    - Crear un **Webhook**.
    - Copiar la URL generada por Discord.
 
-4. Pegar la URL en el archivo `.env`:
+4. Pegar la URL y definir un secreto en el archivo `.env`:
 
 ```env
 PORT=3000
 DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/..."
+SECRET_TOKEN="un-secreto-seguro"
 ```
 
 ## Levantar el proyecto
@@ -57,6 +59,8 @@ El endpoint que recibe eventos de GitHub es:
 POST /api/github
 ```
 
+Todas las solicitudes se validan con la cabecera `X-Hub-Signature-256`. El servidor calcula una firma HMAC con SHA-256 usando `SECRET_TOKEN`; si la firma no es válida, responde con `401 Unauthorized`.
+
 ## Probar con GitHub
 
 Para conectar GitHub con este proyecto:
@@ -69,7 +73,8 @@ Para conectar GitHub con este proyecto:
 https://TU_URL_PUBLICA/api/github
 ```
 
-4. Enviar los eventos que quieras probar desde GitHub.
+4. En el campo **Secret**, ingresar exactamente el mismo valor configurado en `SECRET_TOKEN`.
+5. Enviar los eventos que quieras probar desde GitHub.
 
 ## Scripts disponibles
 
